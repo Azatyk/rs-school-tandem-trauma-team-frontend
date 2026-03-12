@@ -12,6 +12,7 @@
 		"type:check": "tsc --noEmit --pretty"
 	},
 	"dependencies": {
+		"@fontsource-variable/geist": "^5.2.8",
 		"@heroui/react": "^3.0.0-beta.8",
 		"@heroui/styles": "^3.0.0-beta.8",
 		"@tanstack/react-router": "^1.166.7",
@@ -23,6 +24,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.6",
+		"@iconify/react": "^6.0.2",
 		"@tailwindcss/vite": "^4.2.1",
 		"@tanstack/router-plugin": "^1.166.7",
 		"@types/node": "^24.12.0",

@@ -1,2 +1,13 @@
+@import '@fontsource-variable/geist';
 @import 'tailwindcss';
 @import '@heroui/styles';
+
+@theme inline {
+	--font-sans: 'Geist Variable', system-ui;
+}
+
+@layer base {
+	body {
+		@apply bg-background text-foreground antialiased;
+	}
+}
