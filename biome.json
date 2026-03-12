@@ -7,7 +7,7 @@
 	},
 	"files": {
 		"ignoreUnknown": true,
-		"includes": ["**", "!node_modules", "!dist", "!build"]
+		"includes": ["**", "!node_modules", "!.tanstack", "!dist", "!build", "!**/routeTree.gen.ts"]
 	},
 	"formatter": {
 		"enabled": true,
@@ -37,10 +37,13 @@
 		"rules": {
 			"recommended": true,
 			"suspicious": {
-				"noArrayIndexKey": "off"
+				"noUnknownAtRules": "off"
 			},
-			"a11y": {
-				"useSemanticElements": "off"
+			"nursery": {
+				"useSortedClasses": {
+					"level": "error",
+					"fix": "safe"
+				}
 			}
 		},
 		"domains": {
