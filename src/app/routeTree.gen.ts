@@ -9,111 +9,96 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as RegisterRouteImport } from './routes/register'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthProfileRouteImport } from './routes/_auth.profile'
-import { Route as AuthDashboardRouteImport } from './routes/_auth.dashboard'
+import { Route as authCenteredRouteImport } from './routes/(auth)/_centered'
+import { Route as appAuthRouteImport } from './routes/(app)/_auth'
+import { Route as authCenteredRegisterRouteImport } from './routes/(auth)/_centered.register'
+import { Route as authCenteredLoginRouteImport } from './routes/(auth)/_centered.login'
+import { Route as appAuthProfileRouteImport } from './routes/(app)/_auth.profile'
+import { Route as appAuthDashboardRouteImport } from './routes/(app)/_auth.dashboard'
 
-const RegisterRoute = RegisterRouteImport.update({
-  id: '/register',
-  path: '/register',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/_auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthProfileRoute = AuthProfileRouteImport.update({
+const authCenteredRoute = authCenteredRouteImport.update({
+  id: '/(auth)/_centered',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const appAuthRoute = appAuthRouteImport.update({
+  id: '/(app)/_auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authCenteredRegisterRoute = authCenteredRegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => authCenteredRoute,
+} as any)
+const authCenteredLoginRoute = authCenteredLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => authCenteredRoute,
+} as any)
+const appAuthProfileRoute = appAuthProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
-  getParentRoute: () => AuthRoute,
+  getParentRoute: () => appAuthRoute,
 } as any)
-const AuthDashboardRoute = AuthDashboardRouteImport.update({
+const appAuthDashboardRoute = appAuthDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
-  getParentRoute: () => AuthRoute,
+  getParentRoute: () => appAuthRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/login': typeof LoginRoute
-  '/register': typeof RegisterRoute
-  '/dashboard': typeof AuthDashboardRoute
-  '/profile': typeof AuthProfileRoute
+  '/dashboard': typeof appAuthDashboardRoute
+  '/profile': typeof appAuthProfileRoute
+  '/login': typeof authCenteredLoginRoute
+  '/register': typeof authCenteredRegisterRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/login': typeof LoginRoute
-  '/register': typeof RegisterRoute
-  '/dashboard': typeof AuthDashboardRoute
-  '/profile': typeof AuthProfileRoute
+  '/dashboard': typeof appAuthDashboardRoute
+  '/profile': typeof appAuthProfileRoute
+  '/login': typeof authCenteredLoginRoute
+  '/register': typeof authCenteredRegisterRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/_auth': typeof AuthRouteWithChildren
-  '/login': typeof LoginRoute
-  '/register': typeof RegisterRoute
-  '/_auth/dashboard': typeof AuthDashboardRoute
-  '/_auth/profile': typeof AuthProfileRoute
+  '/(app)/_auth': typeof appAuthRouteWithChildren
+  '/(auth)/_centered': typeof authCenteredRouteWithChildren
+  '/(app)/_auth/dashboard': typeof appAuthDashboardRoute
+  '/(app)/_auth/profile': typeof appAuthProfileRoute
+  '/(auth)/_centered/login': typeof authCenteredLoginRoute
+  '/(auth)/_centered/register': typeof authCenteredRegisterRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/register' | '/dashboard' | '/profile'
+  fullPaths: '/' | '/dashboard' | '/profile' | '/login' | '/register'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/register' | '/dashboard' | '/profile'
+  to: '/' | '/dashboard' | '/profile' | '/login' | '/register'
   id:
     | '__root__'
     | '/'
-    | '/_auth'
-    | '/login'
-    | '/register'
-    | '/_auth/dashboard'
-    | '/_auth/profile'
+    | '/(app)/_auth'
+    | '/(auth)/_centered'
+    | '/(app)/_auth/dashboard'
+    | '/(app)/_auth/profile'
+    | '/(auth)/_centered/login'
+    | '/(auth)/_centered/register'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthRoute: typeof AuthRouteWithChildren
-  LoginRoute: typeof LoginRoute
-  RegisterRoute: typeof RegisterRoute
+  appAuthRoute: typeof appAuthRouteWithChildren
+  authCenteredRoute: typeof authCenteredRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/register': {
-      id: '/register'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof RegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_auth': {
-      id: '/_auth'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -121,40 +106,82 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_auth/profile': {
-      id: '/_auth/profile'
+    '/(auth)/_centered': {
+      id: '/(auth)/_centered'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof authCenteredRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(app)/_auth': {
+      id: '/(app)/_auth'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof appAuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/_centered/register': {
+      id: '/(auth)/_centered/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof authCenteredRegisterRouteImport
+      parentRoute: typeof authCenteredRoute
+    }
+    '/(auth)/_centered/login': {
+      id: '/(auth)/_centered/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof authCenteredLoginRouteImport
+      parentRoute: typeof authCenteredRoute
+    }
+    '/(app)/_auth/profile': {
+      id: '/(app)/_auth/profile'
       path: '/profile'
       fullPath: '/profile'
-      preLoaderRoute: typeof AuthProfileRouteImport
-      parentRoute: typeof AuthRoute
+      preLoaderRoute: typeof appAuthProfileRouteImport
+      parentRoute: typeof appAuthRoute
     }
-    '/_auth/dashboard': {
-      id: '/_auth/dashboard'
+    '/(app)/_auth/dashboard': {
+      id: '/(app)/_auth/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
-      preLoaderRoute: typeof AuthDashboardRouteImport
-      parentRoute: typeof AuthRoute
+      preLoaderRoute: typeof appAuthDashboardRouteImport
+      parentRoute: typeof appAuthRoute
     }
   }
 }
 
-interface AuthRouteChildren {
-  AuthDashboardRoute: typeof AuthDashboardRoute
-  AuthProfileRoute: typeof AuthProfileRoute
+interface appAuthRouteChildren {
+  appAuthDashboardRoute: typeof appAuthDashboardRoute
+  appAuthProfileRoute: typeof appAuthProfileRoute
 }
 
-const AuthRouteChildren: AuthRouteChildren = {
-  AuthDashboardRoute: AuthDashboardRoute,
-  AuthProfileRoute: AuthProfileRoute,
+const appAuthRouteChildren: appAuthRouteChildren = {
+  appAuthDashboardRoute: appAuthDashboardRoute,
+  appAuthProfileRoute: appAuthProfileRoute,
 }
 
-const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+const appAuthRouteWithChildren =
+  appAuthRoute._addFileChildren(appAuthRouteChildren)
+
+interface authCenteredRouteChildren {
+  authCenteredLoginRoute: typeof authCenteredLoginRoute
+  authCenteredRegisterRoute: typeof authCenteredRegisterRoute
+}
+
+const authCenteredRouteChildren: authCenteredRouteChildren = {
+  authCenteredLoginRoute: authCenteredLoginRoute,
+  authCenteredRegisterRoute: authCenteredRegisterRoute,
+}
+
+const authCenteredRouteWithChildren = authCenteredRoute._addFileChildren(
+  authCenteredRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AuthRoute: AuthRouteWithChildren,
-  LoginRoute: LoginRoute,
-  RegisterRoute: RegisterRoute,
+  appAuthRoute: appAuthRouteWithChildren,
+  authCenteredRoute: authCenteredRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,6 +1,6 @@
 import { Button } from '@heroui/react'
 
-import { useFormContext } from '@/shared/lib/form'
+import { useFormContext } from '#/shared/lib/form-context'
 
 type SubmitButtonProps = {
 	label: string

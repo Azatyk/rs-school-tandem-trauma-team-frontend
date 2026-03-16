@@ -1,55 +1,47 @@
-import { createContext, use, useCallback, useEffect, useState } from 'react'
+import { createContext, use, useState } from 'react'
 
-export interface AuthContext {
+import { auth } from '#/shared/api/auth'
+import { authLocalStore } from '#/shared/api/auth-local-store'
+import type { LoginCredentials, User } from '#/shared/api/auth-schema'
+
+export type AuthState = {
 	isAuthenticated: boolean
-	login: (username: string) => Promise<void>
+	user: User | undefined
+	login: (credentials: LoginCredentials) => ReturnType<typeof auth.login>
 	logout: () => Promise<void>
-	user: string | null
 }
 
-const AuthContext = createContext<AuthContext | null>(null)
+const AuthContext = createContext<AuthState | null>(null)
 
-const key = 'tanstack.auth.user'
-
-function getStoredUser() {
-	return localStorage.getItem(key)
-}
-
-function setStoredUser(user: string | null) {
-	if (user) {
-		localStorage.setItem(key, user)
-	} else {
-		localStorage.removeItem(key)
-	}
-}
-
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-	const [user, setUser] = useState<string | null>(getStoredUser())
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+	const [user, setUser] = useState<User | undefined>(() => authLocalStore.get('user'))
 	const isAuthenticated = !!user
 
-	const logout = useCallback(async () => {
-		setStoredUser(null)
-		setUser(null)
-	}, [])
+	const login = async (credentials: LoginCredentials) => {
+		const response = await auth.login(credentials)
 
-	const login = useCallback(async (username: string) => {
-		setStoredUser(username)
-		setUser(username)
-	}, [])
+		if (response.data) {
+			authLocalStore.set('user', response.data.user)
+			authLocalStore.set('access_token', response.data.access_token)
+			setUser(response.data.user)
+		}
 
-	useEffect(() => {
-		setUser(getStoredUser())
-	}, [])
+		return response
+	}
+
+	const logout = async () => {
+		await auth.logout()
+		authLocalStore.clear()
+		setUser(undefined)
+	}
 
 	return <AuthContext value={{ isAuthenticated, user, login, logout }}>{children}</AuthContext>
 }
 
-export function useAuth() {
+export const useAuth = () => {
 	const context = use(AuthContext)
 
-	if (!context) {
-		throw new Error('useAuth must be used within an AuthProvider')
-	}
+	if (!context) throw new Error('useAuth must be used within AuthProvider')
 
 	return context
 }

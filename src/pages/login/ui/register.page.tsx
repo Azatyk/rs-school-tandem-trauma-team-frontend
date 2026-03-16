@@ -1,28 +1,41 @@
 import { Form } from '@heroui/react'
 import { revalidateLogic } from '@tanstack/react-form'
-import { Link } from '@tanstack/react-router'
+import { getRouteApi, Link } from '@tanstack/react-router'
 
-import { useAppForm } from '@/shared/lib/form'
-import { FieldGroupPasswordFields } from '@/shared/ui/field-group-password-fields'
+import { auth } from '#/shared/api/auth'
+import { useAppForm } from '#/shared/lib/form'
+import { FieldGroupPasswordFields } from '#/shared/ui/field-group-password-fields'
+import { NavigationGuard } from '#/shared/ui/navigation-guard'
 
 import { registerDefaultValues } from '../model/register-form'
-import { registerSchema } from '../model/register-schema'
+import { RegisterSchema } from '../model/register-schema'
+
+const routeApi = getRouteApi('/(auth)/_centered/register')
 
 export const RegisterPage = () => {
+	const navigate = routeApi.useNavigate()
+
 	const form = useAppForm({
 		defaultValues: registerDefaultValues,
 		validationLogic: revalidateLogic(),
 		validators: {
-			onDynamic: registerSchema
+			onDynamic: RegisterSchema,
+			onSubmitAsync: async ({ value }) => {
+				const { error } = await auth.register(value)
+
+				return {
+					form: error ? (error?.message ?? 'Something went wrong') : null
+				}
+			}
 		},
-		onSubmit: async ({ value }) => {
-			console.log(JSON.stringify(value, null, 2))
+		onSubmit: () => {
+			navigate({ to: '/login', ignoreBlocker: true })
 		}
 	})
 
 	return (
-		<main className='mx-auto flex min-h-svh max-w-sm flex-col justify-center gap-4 px-8 py-10'>
-			<h1 className='mb-4 text-center font-semibold text-3xl'>Sign Up</h1>
+		<>
+			<h1 className='mb-4 text-center font-semibold text-3xl'>Join Niro</h1>
 
 			<form.AppForm>
 				<Form
@@ -35,8 +48,8 @@ export const RegisterPage = () => {
 					}}
 				>
 					<form.AppField
-						name='username'
-						children={(field) => <field.TextField label='Username' placeholder='Enter your username' />}
+						name='name'
+						children={(field) => <field.TextField label='Name' placeholder='Enter your name' />}
 					/>
 
 					<form.AppField
@@ -52,6 +65,16 @@ export const RegisterPage = () => {
 						}}
 					/>
 
+					<form.Subscribe selector={(state) => state.errorMap}>
+						{(errorMap) =>
+							errorMap.onSubmit ? (
+								<p className='field-error' data-visible>
+									{errorMap.onSubmit.form}
+								</p>
+							) : null
+						}
+					</form.Subscribe>
+
 					<form.SubscribeButton label='Sign Up' />
 				</Form>
 			</form.AppForm>
@@ -59,6 +82,17 @@ export const RegisterPage = () => {
 			<Link to='/login' className='link mx-auto text-sm'>
 				Already have an account? Sign In
 			</Link>
-		</main>
+
+			<form.Subscribe selector={(state) => state.isDirty}>
+				{(isDirty) => (
+					<NavigationGuard isActive={isDirty} confirmText='Leave anyway' cancelText='Stay'>
+						<NavigationGuard.Title>Unsaved Changes</NavigationGuard.Title>
+						<NavigationGuard.Content>
+							Are you sure you want to leave? Your changes will be lost.
+						</NavigationGuard.Content>
+					</NavigationGuard>
+				)}
+			</form.Subscribe>
+		</>
 	)
 }

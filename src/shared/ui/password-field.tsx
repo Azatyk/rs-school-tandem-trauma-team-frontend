@@ -3,7 +3,7 @@ import { useReducer } from 'react'
 import { Button, FieldError, InputGroup, Label, TextField } from '@heroui/react'
 import { Icon } from '@iconify/react'
 
-import { useFieldContext } from '@/shared/lib/form'
+import { useFieldContext } from '#/shared/lib/form-context'
 
 type PasswordFieldProps = {
 	label: string
@@ -26,7 +26,7 @@ export const PasswordField = ({ label, placeholder, shouldShowPassword = false }
 			<Label>{label}</Label>
 
 			<InputGroup>
-				<InputGroup.Input placeholder={placeholder} type={isVisible ? 'text' : 'password'} />
+				<InputGroup.Input className='w-full' placeholder={placeholder} type={isVisible ? 'text' : 'password'} />
 
 				{shouldShowPassword && (
 					<InputGroup.Suffix className='pr-0'>

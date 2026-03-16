@@ -1,13 +1,16 @@
 import tailwindcss from '@tailwindcss/vite'
+import { devtools } from '@tanstack/devtools-vite'
 import { tanstackRouter } from '@tanstack/router-plugin/vite'
-import react from '@vitejs/plugin-react'
+import viteReact from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
-import tsconfigPaths from 'vite-tsconfig-paths'
 
-export default defineConfig({
+const config = defineConfig({
+	resolve: {
+		tsconfigPaths: true
+	},
 	plugins: [
+		devtools(),
 		tailwindcss(),
-		tsconfigPaths(),
 		tanstackRouter({
 			target: 'react',
 			autoCodeSplitting: true,
@@ -16,10 +19,12 @@ export default defineConfig({
 			routeFileIgnorePrefix: '-',
 			quoteStyle: 'single'
 		}),
-		react({
+		viteReact({
 			babel: {
 				plugins: [['babel-plugin-react-compiler']]
 			}
 		})
 	]
 })
+
+export default config

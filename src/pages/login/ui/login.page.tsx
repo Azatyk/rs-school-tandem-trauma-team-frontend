@@ -1,27 +1,41 @@
 import { Form } from '@heroui/react'
 import { revalidateLogic } from '@tanstack/react-form'
-import { Link } from '@tanstack/react-router'
+import { getRouteApi, Link } from '@tanstack/react-router'
 
-import { useAppForm } from '@/shared/lib/form'
+import { useAuth } from '#/app/providers/auth'
+import { useAppForm } from '#/shared/lib/form'
 
 import { loginDefaultValues } from '../model/login-form'
-import { loginSchema } from '../model/login-schema'
+import { LoginSchema } from '../model/login-schema'
+
+const routeApi = getRouteApi('/(auth)/_centered/login')
 
 export const LoginPage = () => {
+	const navigate = routeApi.useNavigate()
+	const { redirect } = routeApi.useSearch()
+	const { login } = useAuth()
+
 	const form = useAppForm({
 		defaultValues: loginDefaultValues,
 		validationLogic: revalidateLogic(),
 		validators: {
-			onDynamic: loginSchema
+			onDynamic: LoginSchema,
+			onSubmitAsync: async ({ value }) => {
+				const { error } = await login(value)
+
+				return {
+					form: error ? (error?.message ?? 'Something went wrong') : null
+				}
+			}
 		},
-		onSubmit: async ({ value }) => {
-			console.log(JSON.stringify(value, null, 2))
+		onSubmit: async () => {
+			navigate({ to: redirect })
 		}
 	})
 
 	return (
-		<main className='mx-auto flex min-h-svh max-w-sm flex-col justify-center gap-4 px-8 py-10'>
-			<h1 className='mb-4 text-center font-semibold text-3xl'>Sign In</h1>
+		<>
+			<h1 className='mb-4 text-center font-semibold text-3xl'>Welcome to Niro</h1>
 
 			<form.AppForm>
 				<Form
@@ -43,6 +57,16 @@ export const LoginPage = () => {
 						children={(field) => <field.PasswordField label='Password' placeholder='Enter your password' />}
 					/>
 
+					<form.Subscribe selector={(state) => state.errorMap}>
+						{(errorMap) =>
+							errorMap.onSubmit ? (
+								<p className='field-error' data-visible>
+									{errorMap.onSubmit.form}
+								</p>
+							) : null
+						}
+					</form.Subscribe>
+
 					<form.SubscribeButton label='Sign In' />
 				</Form>
 			</form.AppForm>
@@ -50,6 +74,6 @@ export const LoginPage = () => {
 			<Link to='/register' className='link mx-auto text-sm'>
 				Don't have an account? Sign Up
 			</Link>
-		</main>
+		</>
 	)
 }

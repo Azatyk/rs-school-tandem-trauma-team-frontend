@@ -1,10 +1,12 @@
-import { createFormHook, createFormHookContexts } from '@tanstack/react-form'
+import { lazy } from 'react'
 
-import { PasswordField } from '@/shared/ui/password-field'
-import { SubscribeButton } from '@/shared/ui/subscribe-button'
-import { TextField } from '@/shared/ui/text-field'
+import { createFormHook } from '@tanstack/react-form'
 
-export const { fieldContext, formContext, useFieldContext, useFormContext } = createFormHookContexts()
+import { fieldContext, formContext } from './form-context'
+
+const TextField = lazy(() => import('#/shared/ui/text-field').then((m) => ({ default: m.TextField })))
+const PasswordField = lazy(() => import('#/shared/ui/password-field').then((m) => ({ default: m.PasswordField })))
+const SubscribeButton = lazy(() => import('#/shared/ui/subscribe-button').then((m) => ({ default: m.SubscribeButton })))
 
 export const { useAppForm, withFieldGroup } = createFormHook({
 	fieldComponents: {
