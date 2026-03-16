@@ -1,87 +1,60 @@
-import { useState } from 'react'
-
-import { Button, Input, InputGroup, Label, TextField } from '@heroui/react'
-import { Icon } from '@iconify/react'
+import { Form } from '@heroui/react'
+import { revalidateLogic } from '@tanstack/react-form'
 import { Link } from '@tanstack/react-router'
 
+import { useAppForm } from '@/shared/lib/form'
+import { FieldGroupPasswordFields } from '@/shared/ui/field-group-password-fields'
+
+import { registerDefaultValues } from '../model/register-form'
+import { registerSchema } from '../model/register-schema'
+
 export const RegisterPage = () => {
-	const [isVisible, setIsVisible] = useState(false)
-	const [isConfirmVisible, setIsConfirmVisible] = useState(false)
-
-	const toggleVisibility = () => setIsVisible(!isVisible)
-	const toggleConfirmVisibility = () => setIsConfirmVisible(!isConfirmVisible)
-
-	const onSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
-		e.preventDefault()
-	}
+	const form = useAppForm({
+		defaultValues: registerDefaultValues,
+		validationLogic: revalidateLogic(),
+		validators: {
+			onDynamic: registerSchema
+		},
+		onSubmit: async ({ value }) => {
+			console.log(JSON.stringify(value, null, 2))
+		}
+	})
 
 	return (
 		<main className='mx-auto flex min-h-svh max-w-sm flex-col justify-center gap-4 px-8 py-10'>
 			<h1 className='mb-4 text-center font-semibold text-3xl'>Sign Up</h1>
 
-			<form className='flex flex-col gap-5' onSubmit={onSubmit}>
-				<TextField name='username'>
-					<Label>Username</Label>
-					<Input placeholder='Enter your username' />
-				</TextField>
+			<form.AppForm>
+				<Form
+					className='flex flex-col gap-5'
+					validationBehavior='aria'
+					onSubmit={(event) => {
+						event.preventDefault()
+						event.stopPropagation()
+						form.handleSubmit()
+					}}
+				>
+					<form.AppField
+						name='username'
+						children={(field) => <field.TextField label='Username' placeholder='Enter your username' />}
+					/>
 
-				<TextField name='email' type='email'>
-					<Label>Email</Label>
-					<Input placeholder='Enter your email' />
-				</TextField>
+					<form.AppField
+						name='email'
+						children={(field) => <field.TextField label='Email' type='email' placeholder='Enter your email' />}
+					/>
 
-				<TextField name='password' minLength={8}>
-					<Label>Password</Label>
+					<FieldGroupPasswordFields
+						form={form}
+						fields={{
+							password: 'password',
+							confirm_password: 'confirm_password'
+						}}
+					/>
 
-					<InputGroup>
-						<InputGroup.Input placeholder='Enter your password' type={isVisible ? 'text' : 'password'} />
-
-						<InputGroup.Suffix className='pr-0'>
-							<Button
-								isIconOnly
-								aria-label={isVisible ? 'Hide password' : 'Show password'}
-								size='sm'
-								variant='ghost'
-								onPress={toggleVisibility}
-							>
-								{isVisible ? (
-									<Icon className='pointer-events-none size-4' icon='solar:eye-closed-linear' />
-								) : (
-									<Icon className='pointer-events-none size-4' icon='solar:eye-bold' />
-								)}
-							</Button>
-						</InputGroup.Suffix>
-					</InputGroup>
-				</TextField>
-
-				<TextField name='confirmPassword'>
-					<Label>Confirm Password</Label>
-
-					<InputGroup>
-						<InputGroup.Input placeholder='Confirm your password' type={isConfirmVisible ? 'text' : 'password'} />
-
-						<InputGroup.Suffix className='pr-0'>
-							<Button
-								isIconOnly
-								aria-label={isConfirmVisible ? 'Hide confirm password' : 'Show confirm password'}
-								size='sm'
-								variant='ghost'
-								onPress={toggleConfirmVisibility}
-							>
-								{isConfirmVisible ? (
-									<Icon className='pointer-events-none size-4' icon='solar:eye-closed-linear' />
-								) : (
-									<Icon className='pointer-events-none size-4' icon='solar:eye-bold' />
-								)}
-							</Button>
-						</InputGroup.Suffix>
-					</InputGroup>
-				</TextField>
-
-				<Button className='mt-3 w-full' type='submit'>
-					Sign Up
-				</Button>
-			</form>
+					<form.SubscribeButton label='Sign Up' />
+				</Form>
+			</form.AppForm>
 
 			<Link to='/login' className='link mx-auto text-sm'>
 				Already have an account? Sign In
