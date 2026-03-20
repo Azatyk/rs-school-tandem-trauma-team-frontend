@@ -1,10 +1,13 @@
 import { AuthProvider } from './auth'
+import { QueryClientProvider } from './query'
 import { RouterProvider } from './router'
 
 export const Providers = () => {
 	return (
-		<AuthProvider>
-			<RouterProvider />
-		</AuthProvider>
+		<QueryClientProvider>
+			<AuthProvider>
+				<RouterProvider />
+			</AuthProvider>
+		</QueryClientProvider>
 	)
 }
