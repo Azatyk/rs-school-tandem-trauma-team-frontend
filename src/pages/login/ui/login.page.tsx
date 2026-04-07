@@ -23,9 +23,7 @@ export const LoginPage = () => {
 			onSubmitAsync: async ({ value }) => {
 				const { error } = await login(value)
 
-				return {
-					form: error ? (error?.message ?? 'Something went wrong') : null
-				}
+				return error ? { form: error.message } : null
 			}
 		},
 		onSubmit: async () => {

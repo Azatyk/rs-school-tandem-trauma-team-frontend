@@ -41,9 +41,9 @@ export const createLocalStore = <TSchema extends Record<string, unknown>>(namesp
 		clear() {
 			try {
 				Object.keys(localStorage)
-					.filter((k) => k.startsWith(`${prefix}:`))
-					.forEach((k) => {
-						localStorage.removeItem(k)
+					.filter((key) => key.startsWith(`${prefix}:`))
+					.forEach((key) => {
+						localStorage.removeItem(key)
 					})
 				return true
 			} catch {

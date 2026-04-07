@@ -23,9 +23,7 @@ export const RegisterPage = () => {
 			onSubmitAsync: async ({ value }) => {
 				const { error } = await auth.register(value)
 
-				return {
-					form: error ? (error?.message ?? 'Something went wrong') : null
-				}
+				return error ? { form: error.errors } : null
 			}
 		},
 		onSubmit: () => {
@@ -69,7 +67,7 @@ export const RegisterPage = () => {
 						{(errorMap) =>
 							errorMap.onSubmit ? (
 								<p className='field-error' data-visible>
-									{errorMap.onSubmit.form}
+									{errorMap.onSubmit.form && Object.values(errorMap.onSubmit.form).join(', ')}
 								</p>
 							) : null
 						}
