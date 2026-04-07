@@ -5,6 +5,9 @@ import viteReact from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 
 const config = defineConfig({
+	server: {
+		port: 4321
+	},
 	resolve: {
 		tsconfigPaths: true
 	},
