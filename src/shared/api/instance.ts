@@ -1,22 +1,21 @@
 import { createFetch, createSchema } from '@better-fetch/fetch'
 
 import { authLocalStore } from './auth-local-store'
-import { LoginCredentials, LoginResponse, RegisterCredentials } from './auth-schema'
+import { LoginCredentials, RegisterCredentials } from './auth-schema'
 
 const apiSchema = createSchema({
-	'/api/login': {
-		input: LoginCredentials,
-		output: LoginResponse
+	'/api/auth/login': {
+		input: LoginCredentials
 	},
-	'/api/register': {
-		input: RegisterCredentials,
-		output: LoginResponse
+	'/api/auth/register': {
+		input: RegisterCredentials
 	},
-	'/api/logout': {},
-	'/api/me': {}
+	'/api/auth/logout': {},
+	'/api/auth/me': {}
 })
 
 export const api = createFetch({
+	baseURL: 'http://localhost:3000',
 	schema: apiSchema,
 	auth: {
 		type: 'Bearer',

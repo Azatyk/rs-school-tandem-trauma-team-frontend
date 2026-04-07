@@ -1,15 +1,22 @@
-import type { LoginCredentials, RegisterCredentials } from './auth-schema'
+import type {
+	LoginCredentials,
+	LoginError,
+	LoginSuccess,
+	RegisterCredentials,
+	RegisterError,
+	RegisterSuccess
+} from './auth-schema'
 import { api } from './instance'
 
 export const auth = {
 	login: async (credentials: LoginCredentials) =>
-		api('/api/login', {
+		api<LoginSuccess, LoginError>('/api/auth/login', {
 			method: 'POST',
 			body: credentials
 		}),
 
 	register: async (credentials: RegisterCredentials) =>
-		api('/api/register', {
+		api<RegisterSuccess, RegisterError>('/api/auth/register', {
 			method: 'POST',
 			body: credentials
 		}),
